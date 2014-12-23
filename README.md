@@ -1,8 +1,8 @@
 # JPersistence - A higher level abstraction for JPA
 
 ### What is the magic of JPersistence?
-* It dramatically reduces the code you have to write to persist an entity.
-* It dramatically reduces the code you have to write to query entities.
+* It **dramatically reduces** the code you have to write to persist an entity.
+* It **dramatically reduces** the code you have to write to query entities.
 
 ### How to use JPersistence?
 * To do persistence stuff, you just need to extend your own class from `Home<T>`:
@@ -30,3 +30,16 @@ You can customize query by override `customizeRestrictions()` method:
 		};
 	}
 ```
+
+* To do query stuff, you just need to extend your own class from `Query<T>`:
+```
+    public class MemberQuery extends Query<Member> {
+
+    }
+```
+```
+    memberQuery.getResultList();
+    ... ...
+```
+
+Still in developing... ...
