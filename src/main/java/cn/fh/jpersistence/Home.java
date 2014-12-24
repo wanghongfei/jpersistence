@@ -25,11 +25,20 @@ public abstract class Home<T> {
 	private String[] queryRestrictions;
 	
 	private HomeStatus status;
+	/**
+	 * Indicating the type of JPA.
+	 * Application managed of container managed
+	 */
+	private TransactionType txType;
 	
 	
 	@PersistenceContext
 	private EntityManager em;
 	
+	private enum TransactionType {
+		APPLICATION,
+		CONTAINER
+	}
 	private enum HomeStatus {
 		/**
 		 * This home is prepared to persist a new entity
@@ -44,8 +53,7 @@ public abstract class Home<T> {
 		 */
 		INITIAL
 	}
-	
-	
+
 	/**
 	 * Put an existed entity to this home.
 	 * <p> The invocation of this method will clear previous entity data.
@@ -53,6 +61,7 @@ public abstract class Home<T> {
 	 */
 	public void setInstanceId(Integer id) {
 		clear();
+		determineJpaType();
 		setQueryString();
 		this.id = id;
 		this.status = HomeStatus.OLD_ENTITY;
@@ -67,6 +76,7 @@ public abstract class Home<T> {
 	 */
 	public void setInstance(T instance) {
 		clear();
+		determineJpaType();
 		setQueryString();
 		this.instance = instance;
 		this.status = HomeStatus.NEW_ENTITY;
@@ -81,7 +91,17 @@ public abstract class Home<T> {
 	public void persist() {
 		checkHomeStatus();
 		
+		//System.out.println(this.txType);
+		//System.out.println(this.status);
+		//System.out.println(getClass());
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().begin();
+			//System.out.println("begin transaction");
+		}
 		em.persist(instance);
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().commit();
+		}
 	}
 
 	/**
@@ -91,7 +111,13 @@ public abstract class Home<T> {
 	public void update() {
 		checkHomeStatus();
 
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().begin();
+		}
 		this.instance = em.merge(this.instance);
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().commit();
+		}
 	}
 
 	/**
@@ -101,7 +127,13 @@ public abstract class Home<T> {
 	public void delete() {
 		checkHomeStatus();
 		
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().begin();
+		}
 		em.remove(this.instance);
+		if (this.txType == TransactionType.APPLICATION) {
+			this.em.getTransaction().commit();
+		}
 	}
 
 	/**
@@ -146,6 +178,7 @@ public abstract class Home<T> {
 		this.queryRestrictions = null;
 		
 		this.status = HomeStatus.INITIAL;
+		this.txType = null;
 	}
 	
 	/**
@@ -202,5 +235,27 @@ public abstract class Home<T> {
 				throw new RuntimeException("Cannot guess entity class by reflection");
 			}
 		}
+	}
+	
+	/**
+	 * Determine running environment of JPA: Application managed or container managed
+	 */
+	protected void determineJpaType() {
+		// if the injection for EntityManager failed,
+		// it indicating that this is an application managed JPA
+		if (null == em) {
+			this.txType = TransactionType.APPLICATION;
+		} else {
+			this.txType = TransactionType.CONTAINER;
+		}
+		
+		System.out.println("status : " + this.txType.toString());
+	}
+	
+	/**
+	 * For test only!
+	 */
+	public void setEntityManager(EntityManager em) {
+		this.em = em;
 	}
 }
