@@ -4,7 +4,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+
 import org.junit.Test;
+import org.junit.Assert;
 
 import cn.fh.jpersistence.test.domain.Member;
 import cn.fh.jpersistence.test.domain.MemberHome;
@@ -27,7 +29,7 @@ public class HomeTest {
 	
 	@Test
 	public void testHome() {
-		System.out.println("testing Home");
+		/*System.out.println("testing Home");
 		MemberHome mHome = new MemberHome();
 		
 		Member m = new Member();
@@ -35,6 +37,14 @@ public class HomeTest {
 		mHome.setInstance(m);
 		mHome.setEntityManager(getEntityManager());
 		mHome.persist();
+		Assert.assertEquals("bruce", mHome.getInstance().getName());
+		
+		m = new Member();
+		m.setName("Kitty");
+		mHome.setInstance(m);
+		mHome.setEntityManager(getEntityManager());
+		mHome.persist();
+		Assert.assertEquals("Kitty", mHome.getInstance().getName());*/
 	}
 	
 	private EntityManager getEntityManager() {

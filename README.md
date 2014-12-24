@@ -7,6 +7,7 @@
 ### How to use JPersistence?
 * To do persistence stuff, you just need to extend your own class from `Home<T>`:
 ```
+    @Scope("prototype")
     public class MemberHome extends Home<Member> {
     
     }

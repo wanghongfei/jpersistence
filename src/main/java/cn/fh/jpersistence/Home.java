@@ -9,6 +9,12 @@ import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Derived class of Home<T> must be in the scope of "prototype"
+ * @author whf
+ *
+ * @param <T>
+ */
 public abstract class Home<T> {
 	/**
 	 * The primary key of this entity
@@ -176,6 +182,7 @@ public abstract class Home<T> {
 		instance = null;
 		instanceClass = null;
 		this.queryRestrictions = null;
+		this.em = null;
 		
 		this.status = HomeStatus.INITIAL;
 		this.txType = null;
