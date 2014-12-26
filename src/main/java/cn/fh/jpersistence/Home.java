@@ -1,10 +1,6 @@
 package cn.fh.jpersistence;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,36 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @param <T>
  */
-public abstract class Home<T> {
+public abstract class Home<T> extends AbstractComponent<T> {
 	/**
 	 * The primary key of this entity
 	 */
 	private Integer id;
-	/**
-	 * The entity object
-	 */
 	private T instance;
-	/**
-	 * The Class object of this entity
-	 */
-	private Class<T> instanceClass;
-	private String[] queryRestrictions;
+
 	
 	private HomeStatus status;
-	/**
-	 * Indicating the type of JPA.
-	 * Application managed of container managed
-	 */
-	private TransactionType txType;
+
 	
-	
-	@PersistenceContext
-	private EntityManager em;
-	
-	private enum TransactionType {
-		APPLICATION,
-		CONTAINER
-	}
+
 	private enum HomeStatus {
 		/**
 		 * This home is prepared to persist a new entity
@@ -177,15 +155,13 @@ public abstract class Home<T> {
 		return this.instance;
 	}
 
+	@Override
 	public void clear() {
-		id = null;
-		instance = null;
-		instanceClass = null;
-		this.queryRestrictions = null;
-		this.em = null;
+		super.clear();
 		
-		this.status = HomeStatus.INITIAL;
-		this.txType = null;
+		this.id = null;
+		this.status = null;
+		this.instance = null;
 	}
 	
 	/**
@@ -227,37 +203,7 @@ public abstract class Home<T> {
 		}
 	}
 	
-	/**
-	 * Obtain entity class by reflection.
-	 */
-	@SuppressWarnings("unchecked")
-	private void getEntityType() {
-		if (null == this.instanceClass) {
-			Type type = getClass().getGenericSuperclass();
 
-			if (type instanceof ParameterizedType) {
-				ParameterizedType parmType = (ParameterizedType) type;
-				this.instanceClass = (Class<T>) parmType.getActualTypeArguments()[0];
-			} else {
-				throw new RuntimeException("Cannot guess entity class by reflection");
-			}
-		}
-	}
-	
-	/**
-	 * Determine running environment of JPA: Application managed or container managed
-	 */
-	protected void determineJpaType() {
-		// if the injection for EntityManager failed,
-		// it indicating that this is an application managed JPA
-		if (null == em) {
-			this.txType = TransactionType.APPLICATION;
-		} else {
-			this.txType = TransactionType.CONTAINER;
-		}
-		
-		System.out.println("status : " + this.txType.toString());
-	}
 	
 	/**
 	 * For test only!
