@@ -131,7 +131,7 @@ public abstract class Home<T> extends AbstractComponent<T> {
 			// user does not specify customized restrictions.
 			// use getEntityManager().find() by default.
 			if (null == this.queryRestrictions) {
-				this.instance = getEntityManager().find(instanceClass, id);
+				this.instance = getEntityManager().find(getInstanceClass(), id);
 			} else {
 				// user has specified customized restrictions,
 				// we should generate a JPQL statement with it.
@@ -147,7 +147,7 @@ public abstract class Home<T> extends AbstractComponent<T> {
 					sb.append(this.queryRestrictions[ix]);
 				}
 				
-				this.instance = getEntityManager().createQuery("SELECT obj FROM " + this.instanceClass.getName() + " obj WHERE " + sb.toString(), this.instanceClass)
+				this.instance = getEntityManager().createQuery("SELECT obj FROM " + getInstanceClass().getName() + " obj WHERE " + sb.toString(), getInstanceClass())
 						.getSingleResult();
 			}
 		}
@@ -187,7 +187,7 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		}
 		
 		if (this.status == HomeStatus.NEW_ENTITY) {
-			if (null == this.instance || null == this.instanceClass) {
+			if (null == this.instance || null == getInstanceClass()) {
 				throw new IllegalStateException("You have not set instance for this home!");
 			}
 			
@@ -195,7 +195,7 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		}
 		
 		if (this.status == HomeStatus.OLD_ENTITY) {
-			if (null == this.id || null == this.instance || null == this.instanceClass) {
+			if (null == this.id || null == this.instance || null == getInstanceClass()) {
 				throw new IllegalStateException("You have not set instance for this home!");
 			}
 			

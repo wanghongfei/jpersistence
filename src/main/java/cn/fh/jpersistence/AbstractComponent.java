@@ -11,7 +11,7 @@ public abstract class AbstractComponent<T> {
 	/**
 	 * The Class object of this entity
 	 */
-	protected Class<T> instanceClass;
+	private Class<T> instanceClass;
 	protected String[] queryRestrictions;
 	
 	@PersistenceContext
@@ -29,6 +29,9 @@ public abstract class AbstractComponent<T> {
 		CONTAINER
 	}
 	
+	protected Class<T> getInstanceClass() {
+		return this.instanceClass;
+	}
 	protected EntityManager getEntityManager() {
 		return this.em;
 	}
