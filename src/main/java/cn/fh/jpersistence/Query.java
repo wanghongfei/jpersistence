@@ -53,7 +53,7 @@ public abstract class Query<T> extends AbstractComponent<T> {
 	}
 	
 	private void fetchResultList() {
-		this.resultList = this.em.createQuery("SELECT obj FROM " + this.instanceClass.getName() + " obj", this.instanceClass)
+		this.resultList = getEntityManager().createQuery("SELECT obj FROM " + this.instanceClass.getName() + " obj", this.instanceClass)
 			.setFirstResult(this.maxResult * this.curPage)
 			.setMaxResults(this.maxResult)
 			.getResultList();

@@ -75,16 +75,16 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	public void persist() {
 		checkHomeStatus();
 		
-		//System.out.println(this.txType);
-		//System.out.println(this.status);
-		//System.out.println(getClass());
+		//SystgetEntityManager().out.println(this.txType);
+		//SystgetEntityManager().out.println(this.status);
+		//SystgetEntityManager().out.println(getClass());
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().begin();
-			//System.out.println("begin transaction");
+			getEntityManager().getTransaction().begin();
+			//SystgetEntityManager().out.println("begin transaction");
 		}
-		em.persist(instance);
+		getEntityManager().persist(instance);
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().commit();
+			getEntityManager().getTransaction().commit();
 		}
 	}
 
@@ -96,11 +96,11 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		checkHomeStatus();
 
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().begin();
+			getEntityManager().getTransaction().begin();
 		}
-		this.instance = em.merge(this.instance);
+		this.instance = getEntityManager().merge(this.instance);
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().commit();
+			getEntityManager().getTransaction().commit();
 		}
 	}
 
@@ -112,11 +112,11 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		checkHomeStatus();
 		
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().begin();
+			getEntityManager().getTransaction().begin();
 		}
-		em.remove(this.instance);
+		getEntityManager().remove(this.instance);
 		if (this.txType == TransactionType.APPLICATION) {
-			this.em.getTransaction().commit();
+			getEntityManager().getTransaction().commit();
 		}
 	}
 
@@ -129,9 +129,9 @@ public abstract class Home<T> extends AbstractComponent<T> {
 			getEntityType();
 			
 			// user does not specify customized restrictions.
-			// use em.find() by default.
+			// use getEntityManager().find() by default.
 			if (null == this.queryRestrictions) {
-				this.instance = em.find(instanceClass, id);
+				this.instance = getEntityManager().find(instanceClass, id);
 			} else {
 				// user has specified customized restrictions,
 				// we should generate a JPQL statement with it.
@@ -147,7 +147,7 @@ public abstract class Home<T> extends AbstractComponent<T> {
 					sb.append(this.queryRestrictions[ix]);
 				}
 				
-				this.instance = em.createQuery("SELECT obj FROM " + this.instanceClass.getName() + " obj WHERE " + sb.toString(), this.instanceClass)
+				this.instance = getEntityManager().createQuery("SELECT obj FROM " + this.instanceClass.getName() + " obj WHERE " + sb.toString(), this.instanceClass)
 						.getSingleResult();
 			}
 		}
@@ -209,6 +209,6 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	 * For test only!
 	 */
 	public void setEntityManager(EntityManager em) {
-		this.em = em;
+		super.setEntityManager(em);
 	}
 }

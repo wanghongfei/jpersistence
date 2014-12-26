@@ -15,7 +15,7 @@ public abstract class AbstractComponent<T> {
 	protected String[] queryRestrictions;
 	
 	@PersistenceContext
-	protected EntityManager em;
+	private EntityManager em;
 	
 	/**
 	 * Indicating the type of JPA.
@@ -31,6 +31,9 @@ public abstract class AbstractComponent<T> {
 	
 	protected EntityManager getEntityManager() {
 		return this.em;
+	}
+	protected void setEntityManager(EntityManager entityManager) {
+		this.em = entityManager;
 	}
 	
 	/**
