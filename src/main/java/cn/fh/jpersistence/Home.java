@@ -1,5 +1,7 @@
 package cn.fh.jpersistence;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import org.springframework.transaction.annotation.Propagation;
@@ -122,7 +124,10 @@ public abstract class Home<T> extends AbstractComponent<T> {
 
 	/**
 	 * Retrieve entity from database.
-	 * @return
+	 * <p> If there are many matched instances, only the first one will 
+	 * be returned.
+	 * 
+	 * @return Return null of no entity is found
 	 */
 	public T getInstance() {
 		if (null == this.instance) {
@@ -147,8 +152,11 @@ public abstract class Home<T> extends AbstractComponent<T> {
 					sb.append(this.queryRestrictions[ix]);
 				}
 				
-				this.instance = getEntityManager().createQuery("SELECT obj FROM " + getInstanceClass().getName() + " obj WHERE " + sb.toString(), getInstanceClass())
-						.getSingleResult();
+				List<T> insList = getEntityManager().createQuery("SELECT obj FROM " + getInstanceClass().getName() + " obj WHERE " + sb.toString(), getInstanceClass())
+						.getResultList();
+				
+				this.instance = insList.isEmpty() ? null : insList.get(0);
+
 			}
 		}
 
