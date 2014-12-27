@@ -182,8 +182,11 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		return null;
 	}
 	private void setQueryString() {
-		String[] res = customizeRestriction();
-		setRestrictions(res);
+		// set restrictions only when the restrictions have not been set
+		if (null != getRestrictions()) {
+			String[] res = customizeRestriction();
+			setRestrictions(res);
+		}
 	}
 	
 	private void checkHomeStatus() {

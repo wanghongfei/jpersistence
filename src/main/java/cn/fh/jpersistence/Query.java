@@ -10,8 +10,12 @@ public abstract class Query<T> extends AbstractComponent<T> {
 	private int maxResult = 10;
 	private int curPage = 0;
 	private boolean refresh = false;
+
+	
 	
 	public List<T> getResultList() {
+		setQueryString();
+
 		if (null == this.resultList) {
 			determineJpaType();
 			getEntityType();
@@ -34,6 +38,28 @@ public abstract class Query<T> extends AbstractComponent<T> {
 		this.maxResult = max;
 	}
 	
+	/**
+	 * Give derived class an opportunity to customize query operation.
+	 * 
+	 * <p> Derived class may override this method to return their own query String.
+	 * Home object will use this array of String to generate WHERE statement.
+	 * Every element of this array will be connected by 'AND'
+	 * 
+	 * <p> e.g.: { "obj.name = 'bruce', obj.age = '18', obj.gender = 'male'" } will 
+	 * generate "WHERE obj.name = 'bruce' AND obj.age = 18 AND obj.gender = 'male'".
+	 */
+	protected String[] customizeRestriction() {
+		return null;
+	}
+	private void setQueryString() {
+		// set restrictions only when the restrictions have not been set
+		if (null != getRestrictions()) {
+			String[] res = customizeRestriction();
+			setRestrictions(res);
+		}
+	}
+	
+	
 	@Override
 	public void clear() {
 		super.clear();
@@ -53,7 +79,8 @@ public abstract class Query<T> extends AbstractComponent<T> {
 	}
 	
 	private void fetchResultList() {
-		this.resultList = getEntityManager().createQuery("SELECT obj FROM " + getInstanceClass().getName() + " obj", getInstanceClass())
+		String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS; 
+		this.resultList = getEntityManager().createQuery(queryString, getInstanceClass())
 			.setFirstResult(this.maxResult * this.curPage)
 			.setMaxResults(this.maxResult)
 			.getResultList();
