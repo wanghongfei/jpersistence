@@ -6,13 +6,23 @@ import java.lang.reflect.Type;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-
+/**
+ * 
+ * @author whf
+ *
+ * @param <T>
+ */
 public abstract class AbstractComponent<T> {
 	/**
 	 * The Class object of this entity
 	 */
 	private Class<T> instanceClass;
-	protected String[] queryRestrictions;
+	private String[] queryRestrictions;
+	
+	/**
+	 * The alias used in query string.
+	 */
+	protected final String OBJECT_ALIAS = "obj";
 	
 	@PersistenceContext
 	private EntityManager em;
@@ -29,14 +39,46 @@ public abstract class AbstractComponent<T> {
 		CONTAINER
 	}
 	
+	protected final String[] getRestrictions() {
+		return this.queryRestrictions;
+	}
+	protected final void setRestrictions(String[] restrictions) {
+		this.queryRestrictions = restrictions;
+	}
+
 	protected Class<T> getInstanceClass() {
 		return this.instanceClass;
 	}
+
 	protected EntityManager getEntityManager() {
 		return this.em;
 	}
+
 	protected void setEntityManager(EntityManager entityManager) {
 		this.em = entityManager;
+	}
+	
+	/**
+	 * Generate WHERE statement for query string.
+	 * <p> Restrictions will be connected by 'AND' operator.
+	 * 
+	 * @return
+	 */
+	protected String generateWhereStatement() {
+		// construct WHERE statement
+		StringBuilder sb = new StringBuilder();
+		String[] restrictions = getRestrictions();
+		int len = restrictions.length;
+		for (int ix = 0 ; ix < len ; ++ix) {
+			// not the last element
+			if (ix != len - 1) {
+				sb.append(" AND ");
+			}
+
+			sb.append(restrictions[ix]);
+		}
+		
+		return sb.toString();
 	}
 	
 	/**

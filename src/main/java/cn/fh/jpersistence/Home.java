@@ -135,26 +135,22 @@ public abstract class Home<T> extends AbstractComponent<T> {
 			
 			// user does not specify customized restrictions.
 			// use getEntityManager().find() by default.
-			if (null == this.queryRestrictions) {
+			if (null == getRestrictions()) {
 				this.instance = getEntityManager().find(getInstanceClass(), id);
 			} else {
 				// user has specified customized restrictions,
 				// we should generate a JPQL statement with it.
 				
 				// construct WHERE statement
-				StringBuilder sb = new StringBuilder();
-				for (int ix = 0 ; ix < this.queryRestrictions.length ; ++ix) {
-					// not the last element
-					if (ix != this.queryRestrictions.length - 1) {
-						sb.append(" AND ");
-					}
-
-					sb.append(this.queryRestrictions[ix]);
-				}
+				String whereStatement = generateWhereStatement();
 				
-				List<T> insList = getEntityManager().createQuery("SELECT obj FROM " + getInstanceClass().getName() + " obj WHERE " + sb.toString(), getInstanceClass())
+				
+				String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS + " WHERE " + whereStatement;
+				System.out.println("INFO: Generate Query String: " + queryString);
+				List<T> insList = getEntityManager().createQuery(queryString, getInstanceClass())
 						.getResultList();
 				
+				// get the first entity only if any
 				this.instance = insList.isEmpty() ? null : insList.get(0);
 
 			}
@@ -186,7 +182,8 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		return null;
 	}
 	private void setQueryString() {
-		this.queryRestrictions = customizeRestriction();
+		String[] res = customizeRestriction();
+		setRestrictions(res);
 	}
 	
 	private void checkHomeStatus() {
