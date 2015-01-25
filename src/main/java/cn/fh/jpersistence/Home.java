@@ -152,8 +152,21 @@ public abstract class Home<T> extends AbstractComponent<T> {
 				String whereStatement = generateWhereStatement();
 				
 				
-				String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS + " WHERE " + whereStatement;
+				// construct query string
+				StringBuilder bufQuery= new StringBuilder("SELECT ");
+				bufQuery.append(OBJECT_ALIAS);
+				bufQuery.append(" FROM ");
+				bufQuery.append(getInstanceClass().getName());
+				bufQuery.append(" ");
+				bufQuery.append(OBJECT_ALIAS);
+				bufQuery.append(" WHERE ");
+				bufQuery.append(whereStatement);
+
+				//String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS + " WHERE " + whereStatement;
+				String queryString = bufQuery.toString();
 				System.out.println("INFO: Generate Query String: " + queryString);
+				
+				// perform query
 				List<T> insList = getEntityManager().createQuery(queryString, getInstanceClass())
 						.getResultList();
 				

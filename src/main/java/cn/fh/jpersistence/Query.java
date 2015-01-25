@@ -79,7 +79,15 @@ public abstract class Query<T> extends AbstractComponent<T> {
 	}
 	
 	private void fetchResultList() {
-		String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS; 
+		StringBuilder bufQuery = new StringBuilder("SELECT ");
+		bufQuery.append(OBJECT_ALIAS);
+		bufQuery.append(" FROM ");
+		bufQuery.append(getInstanceClass().getName());
+		bufQuery.append(" ");
+		bufQuery.append(OBJECT_ALIAS);
+
+		//String queryString = "SELECT obj FROM " + getInstanceClass().getName() + " " + OBJECT_ALIAS; 
+		String queryString = bufQuery.toString();
 		this.resultList = getEntityManager().createQuery(queryString, getInstanceClass())
 			.setFirstResult(this.maxResult * this.curPage)
 			.setMaxResults(this.maxResult)
