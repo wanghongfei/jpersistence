@@ -70,6 +70,13 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		getEntityType();
 	}
 	
+	/**
+	 * If the persisting operation requires dependencies, persist 
+	 * these dependencies first. This method will be invoked just before 
+	 * the persisting of the entity.
+	 * 
+	 * @param objsToWire
+	 */
 	protected void wire(Object[] objsToWire) {
 		
 	}
