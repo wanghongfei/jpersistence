@@ -70,6 +70,10 @@ public abstract class Home<T> extends AbstractComponent<T> {
 		getEntityType();
 	}
 	
+	protected void wire(Object[] objsToWire) {
+		
+	}
+	
 	/**
 	 * Persist this entity.
 	 */
@@ -77,14 +81,13 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	public void persist() {
 		checkHomeStatus();
 		
-		//SystgetEntityManager().out.println(this.txType);
-		//SystgetEntityManager().out.println(this.status);
-		//SystgetEntityManager().out.println(getClass());
 		if (this.txType == TransactionType.APPLICATION) {
 			getEntityManager().getTransaction().begin();
-			//SystgetEntityManager().out.println("begin transaction");
 		}
+
+		wire();
 		getEntityManager().persist(instance);
+
 		if (this.txType == TransactionType.APPLICATION) {
 			getEntityManager().getTransaction().commit();
 		}
