@@ -39,6 +39,13 @@ public abstract class AbstractComponent<T> {
 		CONTAINER
 	}
 	
+	protected final boolean isApplicationManaged() {
+		return txType == TransactionType.APPLICATION;
+	}
+	protected final boolean isContainerManaged() {
+		return txType == TransactionType.CONTAINER;
+	}
+	
 	protected final String[] getRestrictions() {
 		return this.queryRestrictions;
 	}

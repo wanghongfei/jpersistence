@@ -81,14 +81,14 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	public void persist() {
 		checkHomeStatus();
 		
-		if (this.txType == TransactionType.APPLICATION) {
+		if (isApplicationManaged()) {
 			getEntityManager().getTransaction().begin();
 		}
 
-		wire();
+		wire(null);
 		getEntityManager().persist(instance);
 
-		if (this.txType == TransactionType.APPLICATION) {
+		if (isApplicationManaged()) {
 			getEntityManager().getTransaction().commit();
 		}
 	}
@@ -100,10 +100,12 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	public void update() {
 		checkHomeStatus();
 
-		if (this.txType == TransactionType.APPLICATION) {
+		if (isApplicationManaged()) {
 			getEntityManager().getTransaction().begin();
 		}
+
 		this.instance = getEntityManager().merge(this.instance);
+
 		if (this.txType == TransactionType.APPLICATION) {
 			getEntityManager().getTransaction().commit();
 		}
@@ -116,11 +118,13 @@ public abstract class Home<T> extends AbstractComponent<T> {
 	public void delete() {
 		checkHomeStatus();
 		
-		if (this.txType == TransactionType.APPLICATION) {
+		if (isApplicationManaged()) {
 			getEntityManager().getTransaction().begin();
 		}
+
 		getEntityManager().remove(this.instance);
-		if (this.txType == TransactionType.APPLICATION) {
+
+		if (isApplicationManaged()) {
 			getEntityManager().getTransaction().commit();
 		}
 	}
