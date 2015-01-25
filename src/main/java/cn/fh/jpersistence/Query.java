@@ -45,7 +45,7 @@ public abstract class Query<T> extends AbstractComponent<T> {
 	 * Home object will use this array of String to generate WHERE statement.
 	 * Every element of this array will be connected by 'AND'
 	 * 
-	 * <p> e.g.: { "obj.name = 'bruce', obj.age = '18', obj.gender = 'male'" } will 
+	 * <p> e.g.: { "obj.name = 'bruce'", "obj.age = '18'", "obj.gender = 'male'" } will 
 	 * generate "WHERE obj.name = 'bruce' AND obj.age = 18 AND obj.gender = 'male'".
 	 */
 	protected String[] customizeRestriction() {
